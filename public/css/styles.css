@@ -1,0 +1,19 @@
+.drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.drop-zone.dragover {
+  background: #e9ecef;
+  border-color: #6c757d;
+}
+
+.student-info {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #6c757d;
+}
