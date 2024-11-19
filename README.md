@@ -9,13 +9,98 @@ This project is a Node.js web application that enables users to upload files to 
 - **Security:** Includes basic security middleware to protect against common web vulnerabilities.
 - **File Management:** View and list the uploaded files stored in AWS S3.
 
-## Prerequisites
+## Screenshots
 
-Before you begin, ensure you have the following installed:
+Below are the screenshots of the application's key screens:
 
-- [Node.js](https://nodejs.org/) (v14 or above)
-- [AWS CLI](https://aws.amazon.com/cli/) (configured with your AWS credentials)
-- [AWS Account](https://aws.amazon.com/) with an S3 bucket set up
+1. **Login Page:**
+   <img src="screenshots/5 login Screenshot 2024-11-18 at 9.25.56 PM.png">
+
+2. **File Upload Page:**
+   <img src="screenshots/1 project setup Screenshot 2024-11-09 at 1.43.37 PM.png">
+
+3. **File List Page:**
+   <img src="screenshots/4 s3 upload Screenshot 2024-11-09 at 8.36.51 PM.png">
+
+4. **Error Handling (Authentication Failure):**
+   <img src="screenshots/6 invalid cred Screenshot 2024-11-18 at 9.27.50 PM.png">
+   <img src="screenshots/Screenshot 2024-11-12 at 6.28.09 PM.png">
+
+## API Documentation
+
+This section describes the key API endpoints in the application.
+
+### Authentication Endpoints
+
+- **POST /auth/login**
+
+  - Description: Logs a user into the system.
+  - Request Body:
+    ```json
+    {
+      "username": "admin",
+      "pin": "1234"
+    }
+    ```
+  - Response:
+    - Success: Redirects to the file upload page.
+    - Failure: Returns a 400 status with an error message.
+
+- **POST /auth/logout**
+  - Description: Logs the user out of the system and destroys the session.
+  - Response:
+    - Success: Redirects to the login page.
+
+### File Upload Endpoints
+
+- **POST /upload**
+
+  - Description: Handles file uploads to AWS S3.
+  - Request Body: Form-data containing the file to be uploaded.
+  - Response:
+    - Success: Returns a JSON object with the file URL on S3.
+    - Failure: Returns a 400 status with an error message.
+
+- **GET /files**
+  - Description: Retrieves a list of all uploaded files from AWS S3.
+  - Response:
+    ```json
+    [
+      {
+        "fileName": "file1.jpg",
+        "url": "https://s3.amazonaws.com/bucket-name/file1.jpg"
+      },
+      {
+        "fileName": "document.pdf",
+        "url": "https://s3.amazonaws.com/bucket-name/document.pdf"
+      }
+    ]
+    ```
+
+## Security Implementation Details
+
+The application incorporates several security measures to ensure the safety and integrity of user data.
+
+### Authentication
+
+- **Session-based Authentication:** The application uses the `express-session` package to manage user sessions. When a user logs in successfully, a session is created, and the user is granted access to upload files.
+- **PIN Authentication:** Users authenticate using a combination of a username and PIN. The PIN is hashed and compared on login to ensure security.
+
+### Security Middleware
+
+- **Helmet:** The application uses [Helmet](https://www.npmjs.com/package/helmet) to set various HTTP headers that help protect the app from common web vulnerabilities.
+  - Example: Protects against cross-site scripting (XSS) attacks and clickjacking.
+- **Express Rate Limiter:** [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) is used to prevent brute-force attacks by limiting the number of requests a user can make in a short time.
+
+### File Upload Security
+
+- **File Type Validation:** Only specific file types are allowed for upload (e.g., `.jpg`, `.png`, `.pdf`). Files that do not match the allowed types are rejected.
+- **File Size Limitation:** The application has a file size limit to prevent large files from being uploaded, which could cause performance issues or abuse of system resources.
+
+### AWS S3 Security
+
+- **IAM User Permissions:** The application uses AWS IAM (Identity and Access Management) to restrict access to the S3 bucket. The IAM user used for the application has the minimum required permissions to interact with S3 (e.g., `s3:PutObject` for file uploads).
+- **Bucket Policy:** The S3 bucket has a policy that restricts access to only the necessary actions and limits access to only the application.
 
 ## Setup and Installation
 
@@ -71,27 +156,10 @@ Before you begin, ensure you have the following installed:
 - **`public/`**: Static files for the frontend (HTML, CSS, JS).
 - **`aws-s3.js`**: Contains the logic for interacting with AWS S3, including file uploads and retrieval.
 
-## Security Considerations
-
-- **Authentication:** The application uses session-based authentication to ensure that only authorized users can upload files.
-- **File Validation:** Only certain file types (e.g., images, documents) are allowed for upload.
-- **Security Middleware:** Helmet.js and express-rate-limit are used to protect the application from various web vulnerabilities.
-
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature-name`).
-5. Open a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Acknowledgments
 
 - [AWS SDK for JavaScript](https://aws.amazon.com/sdk-for-node-js/)
 - [Express.js](https://expressjs.com/)
 - [Multer](https://www.npmjs.com/package/multer) for handling file uploads
 - [Helmet](https://www.npmjs.com/package/helmet) for security headers
+- [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) for rate-limiting requests
